@@ -7,12 +7,25 @@
 
 import SwiftUI
 
+struct CustomText: View {
+    let text: String
+    
+    var body: some View {
+        Text(text)
+    }
+    
+    init(text: String) {
+        print("creating new custom text")
+        self.text = text
+    }
+}
+
 struct ContentView: View {
     var body: some View {
         ScrollView {
-            VStack(spacing: 10){
+            LazyVStack(spacing: 10){
                 ForEach(0..<100) {
-                    Text("item \($0)")
+                    CustomText(text: "item \($0)")
                         .font(.title)
                 }
             }
