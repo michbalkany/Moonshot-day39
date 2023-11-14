@@ -7,22 +7,35 @@
 
 import SwiftUI
 
+struct User: Codable {
+    let name: String
+    let address: Address
+}
 
+struct Address: Codable {
+    let street: String
+    let city: String
+}
 
 struct ContentView: View {
     var body: some View {
-        NavigationStack {
-            NavigationLink{
-                Text("Detailed View")
-            } label: {
-                VStack {
-                    Text("This is a label")
-                    Text("So is this")
-                    Image(systemName: "face.smiling")
-                }
-                .font(.largeTitle)
+        Button("Decode JSON") {
+            let input = """
+            {
+                "name" : "Taylor Swift",
+                "address" : {
+                "street" : "123 Swift Av.",
+                "city" : "Nashville"
             }
-                .navigationTitle("SwiftUI")
+        }
+        """
+            
+            let data = Data(input.utf8)
+            let decoder = JSONDecoder()
+            
+            if let user = try? decoder.decode(User.self, from: data) {
+                print(user.address.street)
+            }
         }
     }
 }
