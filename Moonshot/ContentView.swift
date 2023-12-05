@@ -7,35 +7,36 @@
 
 import SwiftUI
 
-struct User: Codable {
-    let name: String
-    let address: Address
-}
-
-struct Address: Codable {
-    let street: String
-    let city: String
-}
-
 struct ContentView: View {
+    let astronauts: [String: Astronaut] = Bundle.main.decode("astronauts.json")
+    let missions: [Mission] = Bundle.main.decode("missions.json")
+    
+   @AppStorage("showingGrid") private var showingGrid = true
+    
     var body: some View {
-        Button("Decode JSON") {
-            let input = """
-            {
-                "name" : "Taylor Swift",
-                "address" : {
-                "street" : "123 Swift Av.",
-                "city" : "Nashville"
+        NavigationStack {
+            Group {
+                if showingGrid {
+                    GridLayout(astronauts: astronauts, missions: missions)
+                } else {
+                    ListLayout(astronauts: astronauts, missions: missions)
+                }
             }
-        }
-        """
-            
-            let data = Data(input.utf8)
-            let decoder = JSONDecoder()
-            
-            if let user = try? decoder.decode(User.self, from: data) {
-                print(user.address.street)
+            .toolbar {
+                Button {
+                    showingGrid.toggle()
+                } label: {
+                    if showingGrid {
+                        Label("show as table", systemImage: "list.dash")
+                    } else {
+                        Label("show as grid", systemImage: "square.grid.2x2")
+                    }
+                }
             }
+            .navigationTitle("Moonshot")
+            .background(.darkBackground)
+            .preferredColorScheme(.dark)
+            .navigationDestination(for: Mission.self) { mission in MissionView(mission: mission, astronauts: astronauts)}
         }
     }
 }
